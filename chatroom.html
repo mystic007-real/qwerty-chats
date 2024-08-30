@@ -70,6 +70,16 @@
             padding: 10px;
             background-color: #2f3136;
         }
+        #messageInput {
+            background-color: #40444b;
+            color: #fff;
+            border: none;
+            padding: 20px;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+            outline: none;
+        }
         .message {
             padding: 10px;
             border-bottom: 1px solid #424549;
@@ -91,6 +101,24 @@
             color: #7289da;
             font-size: 14px;
         }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #23272a;
+            color: #fff;
+        }
+        #hideRoomCodeBtn {
+            background: none;
+            border: none;
+            color: #7289da;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        #hideRoomCodeBtn:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -104,16 +132,19 @@
     </div>
 
     <div class="container" id="chatroom">
-        <h2 style="text-align: center;">Chatroom: <span id="currentRoomCode"></span></h2>
+        <div class="header">
+            <h2>Chatroom: <span id="currentRoomCode"></span></h2>
+            <button id="hideRoomCodeBtn" onclick="toggleRoomCode()">Hide chatroom name (Recommended)</button>
+        </div>
         <div id="chatBox"></div>
         <input type="text" id="messageInput" placeholder="Enter message">
-        <button onclick="sendMessage()">Send</button>
     </div>
 
     <script>
         let username = '';
         let roomCode = '';
         const rooms = {};
+        let roomCodeVisible = true;
 
         function joinRoom() {
             username = document.getElementById('username').value;
@@ -192,6 +223,25 @@
                 loadMessages();
             }
         }
+
+        function toggleRoomCode() {
+            const roomCodeElement = document.getElementById('currentRoomCode');
+            if (roomCodeVisible) {
+                roomCodeElement.innerText = '****';
+                document.getElementById('hideRoomCodeBtn').innerText = 'Show chatroom name';
+            } else {
+                roomCodeElement.innerText = roomCode;
+                document.getElementById('hideRoomCodeBtn').innerText = 'Hide chatroom name (Recommended)';
+            }
+            roomCodeVisible = !roomCodeVisible;
+        }
+
+        document.getElementById('messageInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+                event.preventDefault();
+            }
+        });
     </script>
 </body>
 </html>
