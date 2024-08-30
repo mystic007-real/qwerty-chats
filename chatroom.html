@@ -25,6 +25,8 @@
             position: absolute;
             top: 0;
             left: 0;
+        }
+        .login-container, .reopen-container {
             background-color: #23272a;
         }
         .login-container h2, .reopen-container h2 {
@@ -55,16 +57,19 @@
         #chatroom {
             display: none;
             background-color: #2f3136;
-            flex-direction: column;
             height: 100vh;
             width: 100vw;
             position: absolute;
+            flex-direction: column;
         }
         #chatBox {
             flex-grow: 1;
             overflow-y: auto;
             padding: 10px;
             border-bottom: 1px solid #424549;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: left;
         }
         #messageInput {
             background-color: #40444b;
@@ -107,6 +112,18 @@
         }
         #hideRoomCodeBtn:hover {
             text-decoration: underline;
+        }
+        .edit-btn {
+            font-size: 12px;
+            background-color: #7289da;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .edit-btn:hover {
+            background-color: #5b6eae;
         }
     </style>
 </head>
@@ -291,6 +308,9 @@
                     username = savedSession.username;
                     roomCode = savedSession.roomCode;
                     rooms[roomCode] = savedSession.messages || [];
+                    // Show the chatroom interface if session is valid
+                    document.querySelector('.login-container').style.display = 'none';
+                    document.querySelector('.reopen-container').style.display = 'none';
                     switchToChatroom();
                     document.getElementById('currentRoomCode').innerText = roomCode;
                     loadMessages();
