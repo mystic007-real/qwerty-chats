@@ -90,10 +90,6 @@
             padding: 10px;
             border-bottom: 1px solid #424549;
         }
-        .message .edited-tag {
-            font-size: 10px;
-            color: #8e9297;
-        }
         .header {
             display: flex;
             justify-content: space-between;
@@ -116,18 +112,6 @@
         }
         #hideRoomCodeBtn:hover {
             text-decoration: underline;
-        }
-        .edit-btn {
-            font-size: 12px; /* Smaller size */
-            background-color: #7289da;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            padding: 3px 7px;
-            border-radius: 5px;
-        }
-        .edit-btn:hover {
-            background-color: #5b6eae;
         }
     </style>
 </head>
@@ -238,37 +222,14 @@
             const chatBox = document.getElementById('chatBox');
             chatBox.innerHTML = '';
             if (rooms[roomCode]) {
-                rooms[roomCode].forEach((msg, index) => {
+                rooms[roomCode].forEach(msg => {
                     const messageElement = document.createElement('div');
                     messageElement.className = 'message';
-                    messageElement.innerHTML = `${msg.username}: ${msg.message}`;
-                    if (msg.edited) {
-                        const editedTag = document.createElement('div');
-                        editedTag.className = 'edited-tag';
-                        editedTag.innerText = '*edited*';
-                        messageElement.appendChild(editedTag);
-                    }
-                    if (msg.username === username) {
-                        const editBtn = document.createElement('button');
-                        editBtn.className = 'edit-btn';
-                        editBtn.innerText = 'Edit';
-                        editBtn.onclick = () => editMessage(index);
-                        messageElement.appendChild(editBtn);
-                    }
+                    messageElement.innerText = `${msg.username}: ${msg.message}`;
                     chatBox.appendChild(messageElement);
                 });
             }
             chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        function editMessage(index) {
-            const newMessage = prompt('Edit your message:', rooms[roomCode][index].message);
-            if (newMessage !== null) {
-                rooms[roomCode][index].message = newMessage;
-                rooms[roomCode][index].edited = true;
-                saveSession();
-                loadMessages();
-            }
         }
 
         function toggleRoomCode() {
