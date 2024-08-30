@@ -184,7 +184,10 @@
                 roomCode = session.roomCode;
                 rooms[roomCode] = session.messages || [];
                 document.querySelector('.login-container').style.display = 'none';
-                document.querySelector('.reopen-container').style.display = 'flex';
+                document.querySelector('.reopen-container').style.display = 'none';
+                switchToChatroom();
+                document.getElementById('currentRoomCode').innerText = roomCode;
+                loadMessages();
             } else {
                 alert('No previous session found.');
             }
@@ -266,7 +269,7 @@
             localStorage.setItem('chatSession', JSON.stringify({
                 username,
                 roomCode,
-                messages: rooms[roomCode]
+                messages: rooms[roomCode] || []
             }));
         }
 
@@ -286,15 +289,19 @@
         window.onload = function() {
             const session = localStorage.getItem('chatSession');
             if (session) {
-                document.querySelector('.login-container').style.display = 'none';
-                document.querySelector('.reopen-container').style.display = 'none';
-                switchToChatroom();
                 const savedSession = JSON.parse(session);
-                username = savedSession.username;
-                roomCode = savedSession.roomCode;
-                rooms[roomCode] = savedSession.messages || [];
-                document.getElementById('currentRoomCode').innerText = roomCode;
-                loadMessages();
+                if (savedSession.username && savedSession.roomCode) {
+                    username = savedSession.username;
+                    roomCode = savedSession.roomCode;
+                    rooms[roomCode] = savedSession.messages || [];
+                    document.querySelector('.login-container').style.display = 'none';
+                    document.querySelector('.reopen-container').style.display = 'none';
+                    switchToChatroom();
+                    document.getElementById('currentRoomCode').innerText = roomCode;
+                    loadMessages();
+                } else {
+                    localStorage.removeItem('chatSession');
+                }
             }
         }
     </script>
