@@ -61,6 +61,7 @@
             width: 100vw;
             height: 100vh;
             position: relative;
+            flex-direction: column;
         }
         #chatBox {
             flex-grow: 1;
@@ -147,6 +148,7 @@
             roomCode = document.getElementById('roomCode').value.toUpperCase();
 
             if (username && roomCode) {
+                // Initialize room if it does not exist
                 if (!rooms[roomCode]) {
                     alert('Room does not exist!');
                     return;
@@ -200,6 +202,10 @@
         function sendMessage() {
             const message = document.getElementById('messageInput').value;
             if (message && roomCode && username) {
+                if (!rooms[roomCode]) {
+                    alert('Room does not exist!');
+                    return;
+                }
                 rooms[roomCode].push({ username, message });
                 saveSession();
                 document.getElementById('messageInput').value = '';
@@ -210,25 +216,27 @@
         function loadMessages() {
             const chatBox = document.getElementById('chatBox');
             chatBox.innerHTML = '';
-            rooms[roomCode].forEach((msg, index) => {
-                const messageElement = document.createElement('div');
-                messageElement.className = 'message';
-                messageElement.innerHTML = `${msg.username}: ${msg.message}`;
-                if (msg.edited) {
-                    const editedTag = document.createElement('div');
-                    editedTag.className = 'edited-tag';
-                    editedTag.innerText = '*edited*';
-                    messageElement.appendChild(editedTag);
-                }
-                if (msg.username === username) {
-                    const editBtn = document.createElement('button');
-                    editBtn.className = 'edit-btn';
-                    editBtn.innerText = 'Edit';
-                    editBtn.onclick = () => editMessage(index);
-                    messageElement.appendChild(editBtn);
-                }
-                chatBox.appendChild(messageElement);
-            });
+            if (rooms[roomCode]) {
+                rooms[roomCode].forEach((msg, index) => {
+                    const messageElement = document.createElement('div');
+                    messageElement.className = 'message';
+                    messageElement.innerHTML = `${msg.username}: ${msg.message}`;
+                    if (msg.edited) {
+                        const editedTag = document.createElement('div');
+                        editedTag.className = 'edited-tag';
+                        editedTag.innerText = '*edited*';
+                        messageElement.appendChild(editedTag);
+                    }
+                    if (msg.username === username) {
+                        const editBtn = document.createElement('button');
+                        editBtn.className = 'edit-btn';
+                        editBtn.innerText = 'Edit';
+                        editBtn.onclick = () => editMessage(index);
+                        messageElement.appendChild(editBtn);
+                    }
+                    chatBox.appendChild(messageElement);
+                });
+            }
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
@@ -277,8 +285,16 @@
 
         window.onload = function() {
             const session = localStorage.getItem('chatSession');
-            if (!session) {
+            if (session) {
+                document.querySelector('.login-container').style.display = 'none';
                 document.querySelector('.reopen-container').style.display = 'none';
+                switchToChatroom();
+                const savedSession = JSON.parse(session);
+                username = savedSession.username;
+                roomCode = savedSession.roomCode;
+                rooms[roomCode] = savedSession.messages || [];
+                document.getElementById('currentRoomCode').innerText = roomCode;
+                loadMessages();
             }
         }
     </script>
