@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flash Drive Chatroom</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: #007BFF;
+            color: #fff;
+            font-size: 16px;
+        }
+        #chatroom {
+            display: none;
+        }
+        .message {
+            text-align: left;
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="login">
+        <h2>Enter Chatroom</h2>
+        <input type="text" id="username" placeholder="Enter username">
+        <input type="text" id="roomCode" placeholder="Enter chatroom code">
+        <button onclick="joinRoom()">Join Room</button>
+        <button onclick="createRoom()">Create Room</button>
+    </div>
+
+    <div class="container" id="chatroom">
+        <h2>Chatroom: <span id="currentRoomCode"></span></h2>
+        <div id="chatBox" style="height: 200px; overflow-y: scroll; margin-bottom: 10px; border: 1px solid #ddd; padding: 10px;"></div>
+        <input type="text" id="messageInput" placeholder="Enter message">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        let username = '';
+        let roomCode = '';
+        const rooms = {};
+
+        function joinRoom() {
+            username = document.getElementById('username').value;
+            roomCode = document.getElementById('roomCode').value.toUpperCase();
+
+            if (username && roomCode) {
+                if (!rooms[roomCode]) {
+                    alert('Room does not exist!');
+                    return;
+                }
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('chatroom').style.display = 'block';
+                document.getElementById('currentRoomCode').innerText = roomCode;
+                loadMessages();
+            } else {
+                alert('Please enter both username and room code.');
+            }
+        }
+
+        function createRoom() {
+            username = document.getElementById('username').value;
+            roomCode = generateRoomCode();
+
+            if (username) {
+                rooms[roomCode] = [];
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('chatroom').style.display = 'block';
+                document.getElementById('currentRoomCode').innerText = roomCode;
+                alert('Room created! Code: ' + roomCode);
+            } else {
+                alert('Please enter a username.');
+            }
+        }
+
+        function generateRoomCode() {
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let code = '';
+            for (let i = 0; i < 4; i++) {
+                code += letters[Math.floor(Math.random() * letters.length)];
+            }
+            return code;
+        }
+
+        function sendMessage() {
+            const message = document.getElementById('messageInput').value;
+            if (message && roomCode && username) {
+                rooms[roomCode].push({ username, message });
+                document.getElementById('messageInput').value = '';
+                loadMessages();
+            }
+        }
+
+        function loadMessages() {
+            const chatBox = document.getElementById('chatBox');
+            chatBox.innerHTML = '';
+            rooms[roomCode].forEach(msg => {
+                const messageElement = document.createElement('div');
+                messageElement.className = 'message';
+                messageElement.innerText = `${msg.username}: ${msg.message}`;
+                chatBox.appendChild(messageElement);
+            });
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
