@@ -152,6 +152,7 @@
 
             if (username && roomCode) {
                 if (!rooms[roomCode]) {
+                    console.error(`Room does not exist: ${roomCode}`); // Debugging line
                     alert('Room does not exist!');
                     return;
                 }
@@ -208,6 +209,7 @@
             const message = document.getElementById('messageInput').value;
             if (message && roomCode && username) {
                 if (!rooms[roomCode]) {
+                    console.error(`Room does not exist: ${roomCode}`); // Debugging line
                     alert('Room does not exist!');
                     return;
                 }
