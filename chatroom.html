@@ -9,6 +9,7 @@
             margin: 0;
             padding: 0;
             height: 100%;
+            width: 100%;
             font-family: Arial, sans-serif;
             background-color: #2c2f33;
             color: #fff;
@@ -20,12 +21,18 @@
         .container {
             background-color: #23272a;
             width: 100%;
-            max-width: 800px;
             height: 100%;
-            display: flex;
+            display: none;
             flex-direction: column;
             border-radius: 5px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+        }
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
         }
         input, button {
             padding: 10px;
@@ -33,6 +40,7 @@
             border-radius: 5px;
             border: none;
             width: 100%;
+            max-width: 400px;
             font-size: 16px;
         }
         input {
@@ -44,28 +52,20 @@
             background-color: #7289da;
             color: #fff;
             cursor: pointer;
+            max-width: 400px;
         }
         button:hover {
             background-color: #5b6eae;
         }
-        #login {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-        }
         #chatroom {
-            display: none;
-            flex-grow: 1;
             display: flex;
             flex-direction: column;
+            height: 100%;
+            width: 100%;
         }
         #chatBox {
             flex-grow: 1;
             overflow-y: scroll;
-            margin-bottom: 10px;
             border: none;
             padding: 10px;
             background-color: #2f3136;
@@ -95,7 +95,7 @@
 </head>
 <body>
 
-    <div class="container" id="login">
+    <div class="login-container" id="login">
         <h2>Enter Chatroom</h2>
         <input type="text" id="username" placeholder="Enter username">
         <input type="text" id="roomCode" placeholder="Enter chatroom code">
@@ -104,7 +104,7 @@
     </div>
 
     <div class="container" id="chatroom">
-        <h2>Chatroom: <span id="currentRoomCode"></span></h2>
+        <h2 style="text-align: center;">Chatroom: <span id="currentRoomCode"></span></h2>
         <div id="chatBox"></div>
         <input type="text" id="messageInput" placeholder="Enter message">
         <button onclick="sendMessage()">Send</button>
