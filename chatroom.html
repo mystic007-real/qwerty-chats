@@ -60,6 +60,8 @@
             height: 100vh;
             width: 100vw;
             position: absolute;
+            top: 0;
+            left: 0;
             flex-direction: column;
         }
         #chatBox {
@@ -102,6 +104,8 @@
             position: fixed;
             width: 100%;
             top: 0;
+            left: 0;
+            z-index: 1;
         }
         #hideRoomCodeBtn {
             background: none;
@@ -114,7 +118,7 @@
             text-decoration: underline;
         }
         .edit-btn {
-            font-size: 12px;
+            font-size: 10px;
             background-color: #7289da;
             color: #fff;
             border: none;
@@ -308,14 +312,9 @@
                     username = savedSession.username;
                     roomCode = savedSession.roomCode;
                     rooms[roomCode] = savedSession.messages || [];
-                    // Show the chatroom interface if session is valid
-                    document.querySelector('.login-container').style.display = 'none';
+                    // Ensure that the start page is visible
+                    document.querySelector('.login-container').style.display = 'flex';
                     document.querySelector('.reopen-container').style.display = 'none';
-                    switchToChatroom();
-                    document.getElementById('currentRoomCode').innerText = roomCode;
-                    loadMessages();
-                } else {
-                    localStorage.removeItem('chatSession');
                 }
             }
         }
