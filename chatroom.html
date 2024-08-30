@@ -118,12 +118,12 @@
             text-decoration: underline;
         }
         .edit-btn {
-            font-size: 10px;
+            font-size: 12px; /* Smaller size */
             background-color: #7289da;
             color: #fff;
             border: none;
             cursor: pointer;
-            padding: 5px 10px;
+            padding: 3px 7px;
             border-radius: 5px;
         }
         .edit-btn:hover {
@@ -305,18 +305,8 @@
         });
 
         window.onload = function() {
-            const session = localStorage.getItem('chatSession');
-            if (session) {
-                const savedSession = JSON.parse(session);
-                if (savedSession.username && savedSession.roomCode) {
-                    username = savedSession.username;
-                    roomCode = savedSession.roomCode;
-                    rooms[roomCode] = savedSession.messages || [];
-                    // Ensure that the start page is visible
-                    document.querySelector('.login-container').style.display = 'flex';
-                    document.querySelector('.reopen-container').style.display = 'none';
-                }
-            }
+            document.querySelector('.login-container').style.display = 'flex';
+            document.querySelector('.reopen-container').style.display = 'none';
         }
     </script>
 </body>
