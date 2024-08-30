@@ -15,11 +15,11 @@
             color: #fff;
             overflow: hidden;
         }
-        .login-container, .reopen-container, #chatroom {
-            display: flex;
+        .container {
+            background-color: #23272a;
+            display: none;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            border-radius: 5px;
             width: 100%;
             height: 100%;
             position: absolute;
@@ -27,10 +27,12 @@
             left: 0;
         }
         .login-container, .reopen-container {
-            background-color: #23272a;
-        }
-        .login-container h2, .reopen-container h2 {
-            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
         }
         input, button {
             padding: 10px;
@@ -55,20 +57,22 @@
             background-color: #5b6eae;
         }
         #chatroom {
-            display: none;
+            display: flex;
+            flex-direction: column;
             background-color: #23272a;
             border-radius: 5px;
-            width: 100vw;
-            height: 100vh;
-            position: relative;
-            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
         #chatBox {
             flex-grow: 1;
             overflow-y: auto;
+            border: none;
             padding: 10px;
             background-color: #2f3136;
-            border-bottom: 1px solid #424549;
         }
         #messageInput {
             background-color: #40444b;
@@ -79,25 +83,38 @@
             width: 100%;
             box-sizing: border-box;
             outline: none;
-            position: absolute;
-            bottom: 0;
-            left: 0;
         }
         .message {
             padding: 10px;
             border-bottom: 1px solid #424549;
+            position: relative;
             color: #dcdde1;
         }
         .message .edited-tag {
             font-size: 10px;
             color: #8e9297;
         }
+        .message:hover .edit-btn {
+            display: inline;
+        }
+        .edit-btn {
+            display: none;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #7289da;
+            font-size: 14px;
+        }
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px;
-            background-color: #2c2f33;
+            background-color: #23272a;
             color: #fff;
         }
         #hideRoomCodeBtn {
@@ -123,12 +140,7 @@
         <button onclick="reopenRoom()">Re-open Previous Chatroom</button>
     </div>
 
-    <div class="reopen-container" id="reopen" style="display: none;">
-        <h2>Re-open Previous Chatroom</h2>
-        <button onclick="reopenRoom()">Re-open Previous Chatroom</button>
-    </div>
-
-    <div id="chatroom">
+    <div class="container" id="chatroom">
         <div class="header">
             <h2>Chatroom: <span id="currentRoomCode"></span></h2>
             <button id="hideRoomCodeBtn" onclick="toggleRoomCode()">Hide chatroom name (Recommended)</button>
@@ -148,7 +160,6 @@
             roomCode = document.getElementById('roomCode').value.toUpperCase();
 
             if (username && roomCode) {
-                // Initialize room if it does not exist
                 if (!rooms[roomCode]) {
                     alert('Room does not exist!');
                     return;
@@ -183,8 +194,6 @@
                 username = session.username;
                 roomCode = session.roomCode;
                 rooms[roomCode] = session.messages || [];
-                document.querySelector('.login-container').style.display = 'none';
-                document.querySelector('.reopen-container').style.display = 'none';
                 switchToChatroom();
                 document.getElementById('currentRoomCode').innerText = roomCode;
                 loadMessages();
@@ -205,10 +214,6 @@
         function sendMessage() {
             const message = document.getElementById('messageInput').value;
             if (message && roomCode && username) {
-                if (!rooms[roomCode]) {
-                    alert('Room does not exist!');
-                    return;
-                }
                 rooms[roomCode].push({ username, message });
                 saveSession();
                 document.getElementById('messageInput').value = '';
@@ -219,27 +224,25 @@
         function loadMessages() {
             const chatBox = document.getElementById('chatBox');
             chatBox.innerHTML = '';
-            if (rooms[roomCode]) {
-                rooms[roomCode].forEach((msg, index) => {
-                    const messageElement = document.createElement('div');
-                    messageElement.className = 'message';
-                    messageElement.innerHTML = `${msg.username}: ${msg.message}`;
-                    if (msg.edited) {
-                        const editedTag = document.createElement('div');
-                        editedTag.className = 'edited-tag';
-                        editedTag.innerText = '*edited*';
-                        messageElement.appendChild(editedTag);
-                    }
-                    if (msg.username === username) {
-                        const editBtn = document.createElement('button');
-                        editBtn.className = 'edit-btn';
-                        editBtn.innerText = 'Edit';
-                        editBtn.onclick = () => editMessage(index);
-                        messageElement.appendChild(editBtn);
-                    }
-                    chatBox.appendChild(messageElement);
-                });
-            }
+            rooms[roomCode].forEach((msg, index) => {
+                const messageElement = document.createElement('div');
+                messageElement.className = 'message';
+                messageElement.innerHTML = `${msg.username}: ${msg.message}`;
+                if (msg.edited) {
+                    const editedTag = document.createElement('div');
+                    editedTag.className = 'edited-tag';
+                    editedTag.innerText = '*edited*';
+                    messageElement.appendChild(editedTag);
+                }
+                if (msg.username === username) {
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'edit-btn';
+                    editBtn.innerText = 'Edit';
+                    editBtn.onclick = () => editMessage(index);
+                    messageElement.appendChild(editBtn);
+                }
+                chatBox.appendChild(messageElement);
+            });
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
@@ -269,14 +272,15 @@
             localStorage.setItem('chatSession', JSON.stringify({
                 username,
                 roomCode,
-                messages: rooms[roomCode] || []
+                messages: rooms[roomCode]
             }));
         }
 
         function switchToChatroom() {
             document.getElementById('login').style.display = 'none';
-            document.getElementById('reopen').style.display = 'none';
             document.getElementById('chatroom').style.display = 'flex';
+            document.getElementById('chatroom').style.width = '100vw';
+            document.getElementById('chatroom').style.height = '100vh';
         }
 
         document.getElementById('messageInput').addEventListener('keypress', function(event) {
@@ -289,19 +293,8 @@
         window.onload = function() {
             const session = localStorage.getItem('chatSession');
             if (session) {
-                const savedSession = JSON.parse(session);
-                if (savedSession.username && savedSession.roomCode) {
-                    username = savedSession.username;
-                    roomCode = savedSession.roomCode;
-                    rooms[roomCode] = savedSession.messages || [];
-                    document.querySelector('.login-container').style.display = 'none';
-                    document.querySelector('.reopen-container').style.display = 'none';
-                    switchToChatroom();
-                    document.getElementById('currentRoomCode').innerText = roomCode;
-                    loadMessages();
-                } else {
-                    localStorage.removeItem('chatSession');
-                }
+                document.querySelector('.login-container').style.display = 'none';
+                document.querySelector('.reopen-container').style.display = 'flex';
             }
         }
     </script>
