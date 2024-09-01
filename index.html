@@ -143,7 +143,7 @@
     <script>
         let username = '';
         let roomCode = '';
-        const rooms = {};
+        const rooms = {};  // In-memory storage for chatrooms
         let roomCodeVisible = true;
 
         function joinRoom() {
@@ -152,7 +152,7 @@
 
             if (username && roomCode) {
                 if (!rooms[roomCode]) {
-                    console.error(`Room does not exist: ${roomCode}`); // Debugging line
+                    console.error(`Room does not exist: ${roomCode}`);
                     alert('Room does not exist!');
                     return;
                 }
@@ -209,7 +209,7 @@
             const message = document.getElementById('messageInput').value;
             if (message && roomCode && username) {
                 if (!rooms[roomCode]) {
-                    console.error(`Room does not exist: ${roomCode}`); // Debugging line
+                    console.error(`Room does not exist: ${roomCode}`);
                     alert('Room does not exist!');
                     return;
                 }
